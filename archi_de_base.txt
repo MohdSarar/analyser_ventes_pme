@@ -1,0 +1,11 @@
+analyser_ventes_pme/
+  README.md
+  .gitignore
+  docs/
+    brief_projet.pdf
+  data/
+    produits.csv
+    magasins.csv
+    ventes.csv
+  sql/
+    schema.sql

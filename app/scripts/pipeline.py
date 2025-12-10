@@ -42,11 +42,19 @@ def nettoyer_prix(val):
     txt = str(val).strip()
     if not txt:
         return 0.0
-    txt = txt.replace(" ", "").replace(",", ".")
+    txt = txt.replace("€", "")
+    txt = txt.replace(" ", "")
+    txt = txt.replace("\u00a0", "")
+    txt = txt.replace(",", ".")
+    #gestion des separateurs de milliers eventuels
+    if txt.count(".") > 1:
+        parts = txt.split(".")
+        txt = "".join(parts[:-1]) + "." + parts[-1]
     try:
         return float(txt)
     except ValueError:
         return 0.0
+
 
 
 def nettoyer_int(val):
@@ -90,7 +98,7 @@ def load_produits(conn):
 
     conn.execute("delete from produits")
     with path.open("r", encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f, delimiter=",")
         rows = []
         for row in reader:
             ref = row.get("ID Référence produit", "").strip()
@@ -117,7 +125,7 @@ def load_magasins(conn):
 
     conn.execute("delete from magasins")
     with path.open("r", encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f, delimiter=",")
         rows = []
         for row in reader:
             id_mag = nettoyer_int(row.get("ID Magasin"))
@@ -142,7 +150,7 @@ def load_ventes(conn):
         raise FileNotFoundError(f"csv ventes introuvable: {path}")
 
     with path.open("r", encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f, delimiter=",")
         rows = []
         for row in reader:
             date_brut = row.get("Date", "")

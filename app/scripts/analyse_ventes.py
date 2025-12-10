@@ -53,24 +53,24 @@ def analyse_ca_total(conn):
 
 
 def analyse_ca_par_produit(conn):
-    #calcul du chiffre d'affaires par produit
+    #calcul du chiffre d'affaires par produit (avec nom du produit)
     sql = """
-    select v.id_produit, sum(v.quantite * p.prix) as ca
+    select p.nom_produit, sum(v.quantite * p.prix) as ca
     from ventes v
     join produits p on v.id_produit = p.id_produit
-    group by v.id_produit
+    group by p.nom_produit
     order by ca desc
     """
     cur = conn.execute(sql)
     rows = cur.fetchall()
     now_iso = get_now_iso()
-    for ref, ca in rows:
+    for nom_produit, ca in rows:
         if ca is None:
             continue
         conn.execute(
             "insert into resultats_analyses(type_resultat, cle, valeur, date_calcul) "
             "values (?, ?, ?, ?)",
-            ("ca_par_produit", str(ref), float(ca), now_iso),
+            ("ca_par_produit", str(nom_produit), float(ca), now_iso),
         )
     conn.commit()
     print(f"{len(rows)} lignes de ca par produit enregistrees")

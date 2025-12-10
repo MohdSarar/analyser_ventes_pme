@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["python", "-u", "scripts/test_db.py"]
+CMD ["python", "-u", "scripts/pipeline.py"]

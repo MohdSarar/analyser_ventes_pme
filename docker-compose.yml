@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  db:
+    image: python:3.12-slim
+    volumes:
+      - db_data:/data/db
+
+  app:
+    build: ./app
+    working_dir: /app
+    depends_on:
+      - db
+    volumes:
+      - ./data:/app/data:ro
+      - ./sql:/app/sql:ro
+      - db_data:/app/db
+
+volumes:
+  db_data:
